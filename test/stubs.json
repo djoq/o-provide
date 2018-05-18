@@ -1,0 +1,7 @@
+{
+  "records": [
+    {"id": 1, "name": "record1"},
+    {"id": 2, "name": "record2"},
+    {"id": 3, "name": "record3"}
+  ]
+}

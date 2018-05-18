@@ -1,0 +1,188 @@
+# Description:
+#   This is the REST API for the backend.
+swagger: '2.0'
+
+################################################################################
+#                              API Information                                 #
+################################################################################
+info: # General information
+  version: "0.2.0"
+  title: Mock API
+  description:  API interface
+
+#   contact:
+#     name: API Support
+#     url: http://sbo.tech/cotact
+#     email: danny@sbo.tech
+
+#   license:
+#     name: Copyright D. O'Quinn
+#     url: http://sbo.tech
+
+# externalDocs:
+#   description: More SDK documentation
+#   url: http://sbo.tech/blogs
+
+################################################################################
+#                  Host, Base Path, Schemes and Content Types                  #
+################################################################################
+host: localhost:3000
+basePath: '/'
+tags:
+# - name: "Client"
+#   description: "Authenticate client applications"
+- name: "Record"
+  description: "Some publicly available records"
+    
+schemes:
+  - http
+  # - https
+consumes:
+  - application/x-www-form-urlencoded
+produces:
+  - application/json
+  
+################################################################################
+#                             Security Definitions                             #
+################################################################################
+securityDefinitions:
+
+############################ OAuth2
+
+  code:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: http://localhost:3000/oauth2/code
+    tokenUrl: http://localhost:3000/oauth2/token
+    scopes:
+      records.read: get some record data 
+
+  introspection:
+    type: basic
+
+
+    
+    
+    
+################################################################################
+#                                  Paths                                       #
+################################################################################
+paths:
+
+  # /oauth2/token:
+  #   post:
+  #     tags: 
+  #     - "Client"
+  #     consumes:
+  #       - application/x-www-form-urlencoded
+  #     parameters:
+  #       - name: grant_type
+  #         type: string
+  #         in: formData
+  #         default: password
+  #       - name: username
+  #         type: string
+  #         in: formData
+  #       - name: password
+  #         type: string
+  #         in: formData
+  #     responses:
+  #       200:
+  #         description: OK
+          
+  /records:
+    get:
+      tags:
+      - "Record"
+      summary: "Finds records"
+      description: "Get records to check auth funtionality"
+      operationId: "getAllRecords"
+      produces:
+      - "application/json"
+     
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Record"
+        400:
+          $ref: '#/responses/generic_400_response'
+        401:
+          description: Invalid `api_key`
+        500:
+          $ref: '#/responses/generic_500_response'
+        
+  /secrets:
+    get:
+      tags:
+      - "secret"
+      summary: "Finds authorizable records"
+      description: "Get secret to check auth funtionality"
+      operationId: "getAllSecrets"
+      produces:
+      - "application/json"
+     
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Secret"
+        400:
+          $ref: '#/responses/generic_400_response'
+        401:
+          description: Invalid `api_key`
+        500:
+          $ref: '#/responses/generic_500_response'
+        
+################################################################################
+#                                  Models                                      #
+################################################################################
+# These are the generic responses used by the API
+definitions:
+  Record:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+  Secret:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+
+    
+################################################################################
+#                                  Responses                                   #
+################################################################################
+# These are the generic responses used by the API
+responses:
+  ################################################################################ generic_400_response
+  generic_400_response:
+    description: Missing/malformed parameters
+    schema:
+      title: 400_response
+      description: Returns a detail of the error. Examples can include `email_in_use`, `invalid_email`, `weak_password`, `empty_password`
+      properties:
+        detail:
+          type: string
+
+  ################################################################################ generic_500_response
+  generic_500_response:
+    description: 500-series errors
+    schema:
+      title: 500_response
+      description: Provides error log reference for future bug-tracking. Something like dumping a stack trace server-side and returning a hash for the user to present in a ticketing system.
+      properties:
+        detail:
+          type: string
+

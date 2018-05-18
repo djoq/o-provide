@@ -1,0 +1,26 @@
+version: "3.3"
+
+services:
+  oauth:
+    image: oauth
+    networks:
+      - service-net
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongo
+      - NODE_ENV=production
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+    volumes:
+      - /data/db:/data/db
+    networks: 
+      - service-net
+
+networks:
+  service-net:
+    driver: overlay
+ 

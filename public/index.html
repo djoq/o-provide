@@ -1,0 +1,31 @@
+<html>
+  <head><title>enable oauth</title></head>
+  <body>
+<span>
+              <input id="user" name="username" placeholder="username">
+              <input id="pass" name="password" placeholder="password"><br/>
+              <button id="reject">Reject</button>
+              <button id="submit" >Authorize</button>
+            </span>
+<script>
+  var params = (new URL(location)).searchParams
+  var xhttp = new XMLHttpRequest();
+  document.getElementById("submit").addEventListener("click", function(event){
+    var user = document.getElementById("user").value;
+    var password = document.getElementById("pass").value;
+    let buffer = encodeURIComponent(window.btoa(user+":"+password));
+    xhttp.open("POST", "/oauth/code", true);
+    xhttp.onreadystatechange = function () {
+      if (xhttp.readyState==4) {
+        var x = JSON.parse(xhttp.responseText);
+
+        window.location.replace(x.redirectUri+"?code="+x.authorizationCode+"&state="+params.get("state"));
+      };
+    };
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.setRequestHeader("Authorization", "Bearer "+buffer);
+    xhttp.send("grant_type=authorization_code&response_type=code&client_id=client&redirectUri="+params.get("redirectUri")+"&scope="+params.get("scope"));
+  });
+</script>
+</body>
+</html>
